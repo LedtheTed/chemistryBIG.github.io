@@ -1,6 +1,5 @@
 // import { Environment } from "./environment.js";
-import { Particle } from "./classes/Particle.js";
-import { ElementBase } from "./classes/ElementBase.js";
+import { Particle, ElementBase, Environment } from "./classes/classes.js";
 
 
 let canvas = document.getElementById("sim-canvas");

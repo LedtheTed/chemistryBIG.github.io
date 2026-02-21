@@ -5,6 +5,5 @@ export class Environment {
         this.width;
         this.height;
         this.max_particle_count;
-        this. 
     }
 }

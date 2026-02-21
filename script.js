@@ -11,10 +11,10 @@ let CANVAS_HEIGHT;
 
 // Resize canvas to fit container as a square
 function resizeCanvas() {
-  canvas.width = 500;
-  canvas.height = 500;
-  CANVAS_WIDTH = 500;
-  CANVAS_HEIGHT = 500;
+  canvas.width = 600;
+  canvas.height = 600;
+  CANVAS_WIDTH = 600;
+  CANVAS_HEIGHT = 600;
 }
 resizeCanvas();
 window.addEventListener('resize', resizeCanvas);
@@ -186,6 +186,45 @@ function checkCollisions() {
   });
 }
 
+// Check for decay reactions on individual elements
+function checkDecays() {
+  const toRemove = new Set();
+  
+  for (let i = 0; i < elements.length; i++) {
+    const element = elements[i];
+    if (!element) continue;
+    
+    // Check if this element can decay
+    const decay = window.ChemistryBIG?.getDecayReaction?.(element.name);
+    if (decay && Math.random() < (decay.probability ?? 0)) {
+      // Element decays!
+      const products = Array.isArray(decay.products) ? decay.products : [];
+      
+      for (const productName of products) {
+        const capitalizedName = productName.charAt(0).toUpperCase() + productName.slice(1).toLowerCase();
+        const product = window.ChemistryBIG?.createElementInstance?.(
+          capitalizedName,
+          element.x,
+          element.y
+        );
+        
+        if (product) {
+          elements.push(product);
+        }
+      }
+      
+      toRemove.add(i);
+      console.log(`Decay: ${element.name} -> ${decay.products?.join(' + ')}`);
+    }
+  }
+  
+  // Remove decayed elements in reverse order
+  const indicesToRemove = Array.from(toRemove).sort((a, b) => b - a);
+  indicesToRemove.forEach(index => {
+    elements.splice(index, 1);
+  });
+}
+
 // Canvas click handler to create hydrogen (10% chance) and particle effect
 canvas.addEventListener('click', (event) => {
   const rect = canvas.getBoundingClientRect();
@@ -225,6 +264,8 @@ let Game = {
     });
     // check collisions between elements
     checkCollisions();
+    // check for decay reactions
+    checkDecays();
     // update particles
     particles = particles.filter(p => {
       p.update();

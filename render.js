@@ -1,4 +1,4 @@
-function drawCanvas() {
+function drawCanvas(canvas) {
     document.getElementById("sim-canvas");
-    
+
 }

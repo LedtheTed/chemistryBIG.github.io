@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Molecule Viewer</title>
+
+<script src="https://unpkg.com/cytoscape/dist/cytoscape.min.js"></script>
+
+<style>
+#molecule{
+    width:800px;
+    height:500px;
+    border:1px solid #ddd;
+}
+</style>
+
+</head>
+
+<body>
+
+<input  type="text" id="compoundInput" placeholder="Compound name">
+<button type="button" id="searchBtn">Search</button>
+
+<div id="molecule"></div>
+
+<script type="module" src="main.js"></script>
+
+</body>
+</html>

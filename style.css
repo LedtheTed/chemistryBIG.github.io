@@ -32,15 +32,15 @@ body{
 
 .sim-canvas{
   margin-top:28px;
-  width:min(92%,900px);
-  aspect-ratio:16/9;
+  width:50vw;
+  aspect-ratio:1/1;
   background: linear-gradient(180deg, rgba(12,18,28,0.95), rgba(8,12,18,0.9));
   border-radius:28px;
   border:1px solid rgba(125,211,252,0.06);
   box-shadow: 0 12px 40px rgba(2,6,23,0.7), inset 0 1px 0 rgba(255,255,255,0.02);
   display:block;
   max-width:100%;
-  height:auto;
+  height:50vw;
   cursor:crosshair;
 }
 
@@ -67,6 +67,6 @@ body{
 
 #sim-canvas{
   border: 1px solid red;
-  width: 30vh;
-  height: 30vw;
+  width: 500px;
+  height: 500px;
 }

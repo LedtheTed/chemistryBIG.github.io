@@ -31,43 +31,37 @@ async function getPugViewDataCompound(cid) {
     return response.json();
 }
 
+async function getCompoundSDF(cid) {
+    const url = `https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/${cid}/SDF`;
+
+    const response = await fetch(url);
+    if (!response.ok) {
+        throw new Error(`SDF request failed: ${response.status}`);
+    }
+
+    return response.text(); // SDF is plain text
+}
+
 async function searchCompound(compoundName) {
     try {
         console.log(`Searching CID for: ${compoundName}`);
         const cid = await nameToCID(compoundName);
         console.log(`Found CID: ${cid}`);
 
+        console.log("Retrieving SDF structure...");
+        const sdfData = await getCompoundSDF(cid);
+        console.log(sdfData);
+
         console.log("Retrieving PUG-View data...");
         const data = await getPugViewDataCompound(cid);
 
-        console.log(JSON.stringify(data, null, 2));
+        // console.log(JSON.stringify(data, null, 2));
+
     } catch (error) {
         console.error("Error:", error.message);
     }
 }
 
-async function getPugViewDataElement(atomicNumber) {
-    const url = `https://pubchem.ncbi.nlm.nih.gov/rest/pug_view/data/element/${atomicNumber}/JSON/`;
-
-    const response = await fetch(url);
-    if (!response.ok) {
-        throw new Error(`PUG-View request failed: ${response.status}`);
-    }
-
-    return response.json();
-}       
-
-async function searchElement(atomicNumber) {
-    try {
-        console.log("Retrieving PUG-View data...");
-        const data = await getPugViewDataElement(atomicNumber);
-
-        console.log(JSON.stringify(data, null, 2));
-    } catch (error) {
-        console.error("Error:", error.message);
-    }
-}
 // testing
 // node ./pubChem.js
-searchElement(17);
-
+searchCompound("hydrogen peroxide");

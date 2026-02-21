@@ -1,4 +1,4 @@
-import { drawCanvas } from "./render.js";
+import { Environment } from "./environment.js";
 
 let canvas = document.getElementById("sim-canvas");
 const ctx = canvas.getContext("2d");
@@ -243,6 +243,9 @@ canvas.addEventListener('click', (event) => {
     console.log(`Created hydrogen at (${x}, ${y})`);
   }
 });
+
+
+
 
 let Game = {
 

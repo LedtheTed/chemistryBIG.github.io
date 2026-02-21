@@ -10,18 +10,18 @@
   const REACTION_DEFINITIONS = [
     { reactants: ['H', 'H'], products: ['He'], consumes: true, probability: 0.1, note: 'H + H -> He' },
     { reactants: ['He', 'He'], products: ['Br'], consumes: true, probability: 0.1, note: 'He + He -> Br' },
-    { reactants: ['Br', 'H'], products: ['Li'], consumes: true, probability: 0.3, note: 'Br + H -> Li' },
-    { reactants: ['Li', 'He'], products: ['B'], consumes: true, probability: 0.1, note: 'Li + He -> B' },
-    { reactants: ['Br', 'He'], products: ['C'], consumes: true, probability: 0.01, note: 'Br + He -> C' },
+    { reactants: ['Br', 'H'], products: ['Li'], consumes: true, probability: 0.05, note: 'Br + H -> Li' },
+    { reactants: ['Li', 'He'], products: ['B'], consumes: true, probability: 0.001, note: 'Li + He -> B' },
+    { reactants: ['Br', 'He'], products: ['C'], consumes: true, probability: 0.09, note: 'Br + He -> C' },
     { reactants: ['C', 'H'], products: ['N'], consumes: true, probability: 0.1, note: 'C + H -> N' },
-    { reactants: ['C', 'He'], products: ['O'], consumes: true, probability: 0.05, note: 'C + He -> O' },
+    { reactants: ['C', 'He'], products: ['O'], consumes: true, probability: 0.5, note: 'C + He -> O' },
     { reactants: ['O', 'H'], products: ['F'], consumes: true, probability: 0.05, note: 'O + H -> F' },
     { reactants: ['O', 'He'], products: ['Ne'], consumes: true, probability: 0.01, note: 'O + He -> Ne' }
   ];
 
   // Decay reactions (solo element reactions)
   const DECAY_DEFINITIONS = [
-    { reactant: 'Br', products: ['He', 'He'], probability: 0.001, note: 'Br -> He + He' }
+    { reactant: 'Br', products: ['He', 'He'], probability: 0.0001, note: 'Br -> He + He' }
   ];
 
   // Build the REACTIONS Map from definitions

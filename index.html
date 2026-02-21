@@ -8,13 +8,24 @@
 </head>
 <body>
   <main class="center">
-    <h1 class="title">ChemistryBIG</h1>
+    <h2 class="title">ChemistryB.I.G.</h2>
     <section id="sim-area" class="sim-area" aria-label="Simulation area">
         <canvas id="sim-canvas"></canvas>
+        <div id="right-panel" class="right-panel">
+            <div id="element-counter" class="element-counter">
+                <h3>Element Count</h3>
+                <div id="counter-list" class="counter-list"></div>
+            </div>
+            <div id="molecules-panel" class="molecules-panel">
+                <h3>Molecules</h3>
+                <div id="molecules-list" class="molecules-list"></div>
+            </div>
+        </div>
     </section>
   </main>
   <script src="reactions.js"></script>
   <script src="elements_init.js"></script>
+  <script src="techtree.js"></script>
   <script src="script.js" type="module"></script>
 </body>
 </html>

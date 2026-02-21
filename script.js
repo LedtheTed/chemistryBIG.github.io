@@ -1,4 +1,7 @@
-import { drawCanvas } from "./render.js";
+// import { Environment } from "./environment.js";
+import { Particle } from "./classes/Particle.js";
+import { ElementBase } from "./classes/ElementBase.js";
+
 
 let canvas = document.getElementById("sim-canvas");
 const ctx = canvas.getContext("2d");
@@ -273,6 +276,11 @@ function checkCollisions() {
   indicesToRemove.forEach(index => {
     elements.splice(index, 1);
   });
+  
+  // Update counter if any element was removed
+  if (indicesToRemove.length > 0) {
+    updateElementCounter();
+  }
 }
 
 // Check for decay reactions on individual elements
@@ -312,6 +320,11 @@ function checkDecays() {
   indicesToRemove.forEach(index => {
     elements.splice(index, 1);
   });
+  
+  // Update counter if any element was removed
+  if (indicesToRemove.length > 0) {
+    updateElementCounter();
+  }
 }
 
 // Canvas click handler to create hydrogen (10% chance) and particle effect
@@ -333,8 +346,62 @@ canvas.addEventListener('click', (event) => {
     const hydrogen = window.ChemistryBIG.createElementInstance('H', x, y);
     elements.push(hydrogen);
     console.log(`Created hydrogen at (${x}, ${y})`);
+    updateElementCounter();
   }
 });
+
+// element counter -----------------------------
+
+
+// Count elements by type
+function countElements() {
+  const counts = {};
+  elements.forEach(element => {
+    counts[element.name] = (counts[element.name] || 0) + 1;
+  });
+  return counts;
+}
+
+// Update the element counter display
+function updateElementCounter() {
+  const counterList = document.getElementById('counter-list');
+  const counts = countElements();
+  const allElements = window.ChemistryBIG.getAllElements();
+  
+  // Check for molecule unlocks based on current element counts
+  if (window.ChemistryBIG.checkMoleculeUnlocks) {
+    window.ChemistryBIG.checkMoleculeUnlocks(counts);
+  }
+  
+  // Clear current display
+  counterList.innerHTML = '';
+  
+  // Only show elements that exist in the canvas
+  const elementsToShow = allElements.filter(elementName => counts[elementName] > 0);
+  
+  if (elementsToShow.length === 0) {
+    counterList.innerHTML = '<div style="padding: 8px; text-align: center; color: #93c5fd; font-size: 12px; opacity: 0.6;">No elements</div>';
+    return;
+  }
+  
+  elementsToShow.forEach(elementName => {
+    const count = counts[elementName];
+    const def = window.ChemistryBIG.getElementDefinition(elementName);
+    
+    const counterItem = document.createElement('div');
+    counterItem.className = 'counter-item';
+    counterItem.style.borderLeftColor = def.color;
+    counterItem.style.borderLeftWidth = '3px';
+    counterItem.innerHTML = `
+      <span class="element-name">${elementName}</span>
+      <span class="element-count">${count}</span>
+    `;
+    counterList.appendChild(counterItem);
+  });
+}
+
+// element counter -----------------------------
+
 
 let Game = {
   fps: 60,
@@ -345,7 +412,7 @@ let Game = {
   update: function () {
     // update elements
     elements.forEach(element => {
-      element.update();
+      element.update(canvas);
     });
     // check collisions between elements
     checkCollisions();
@@ -396,6 +463,9 @@ let Game = {
 function debug(message) {
   if (DEBUG) console.log(message);
 }
+
+// Initialize element counter on page load
+updateElementCounter();
 
 // Begin looping
 window.requestAnimationFrame(Game.loop);

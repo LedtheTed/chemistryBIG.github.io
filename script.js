@@ -270,6 +270,8 @@ function payCost(costMap) {
   }
 }
 
+  // tracks auto-generation rates by element
+  const autoRates = Object.create(null);
 
     // NOTE - if this ever gets expanded, this can be greatly simplified with the new way click chances and states are being stored on the game object.
     function applyUpgradeEffect(effect) {
@@ -538,7 +540,7 @@ requestAnimationFrame(autoTick);
     Game.lastRender = Date.now();
 
     // background first
-    this.environments.forEach((environment) => {
+    this.environment.forEach((environment) => {
       environment.drawCanvasBackground();
       environment.drawElements();
       environment.drawParticles();

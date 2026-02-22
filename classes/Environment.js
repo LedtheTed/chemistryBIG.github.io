@@ -79,6 +79,7 @@ export class Environment {
    * @param {*} height Height of the canvas.
    */
   resizeCanvas(width, height) {
+    if (!this.canvas) return;
     this.canvas.width = width;
     this.canvas.height = height;
   }

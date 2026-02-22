@@ -1,249 +1,100 @@
-// ./classes/upgrades.js
+// =========================
+// AUTO COLLECTION (Lv 1) FOR EVERY ELEMENT IN YOUR GAME
+// Rule: costs exactly 1 of that element (so once you make 1, you can always buy it)
+// Effect: auto-generate that element at 2 / sec
+// Ordered by atomic number so purchase order is always “reachable” as you discover elements.
+// =========================
 export const UPGRADES = [
-  // =========================
-  // EARLY: get things moving
-  // =========================
-  {
-    id: "auto_na_1_salt_mine",
-    name: "Salt Mine",
-    desc: "Start producing Sodium (Na) over time.",
-    cost: { H: 1 },
-    effect: { type: "auto_element", element: "Na", rate: 5.0 } 
-  },
-  {
-    id: "sodium_click_1",
-    name: "Salt Surge",
-    desc: "On click, small chance to create a Sodium atom.",
-    cost: { H: 1 },
-    effect: { type: "sodium_click_chance_add", add: 0.05 } // +5%
-  },
-  {
-    id: "auto_h_1",
-    name: "Hydrogen Drip (Lv 1)",
-    desc: "Auto-generate Hydrogen slowly.",
-    cost: { H: 25 },
-    effect: { type: "auto_element", element: "H", rate: 1.5 },
-  },
-  {
-    id: "auto_h_2",
-    name: "Hydrogen Drip (Lv 2)",
-    desc: "Faster Hydrogen auto-generation.",
-    cost: { H: 120, He: 10 },
-    effect: { type: "auto_element", element: "H", rate: 4.7 },
-  },
+    { id:"auto_h_1_basic",  name:"Hydrogen Harvester",  desc:"Auto-generate Hydrogen (2/sec).",  cost:{ H:1 },  effect:{ type:"auto_element", element:"H",  rate:2.0 } },
+    { id:"hydrogen_click_1_basic", name:"Hydrogen Excitation", desc:"On click, +10% chance to create Hydrogen.", cost:{ H:1 }, effect:{ type:"hydrogen_click_chance_add", add:0.10 } },
+    { id:"auto_he_1_basic", name:"Helium Harvester",    desc:"Auto-generate Helium (2/sec).",    cost:{ He:1 }, effect:{ type:"auto_element", element:"He", rate:2.0 } },
+    { id:"auto_li_1_basic", name:"Lithium Harvester",   desc:"Auto-generate Lithium (2/sec).",   cost:{ Li:1 }, effect:{ type:"auto_element", element:"Li", rate:2.0 } },
+    { id:"auto_be_1_basic", name:"Beryllium Harvester", desc:"Auto-generate Beryllium (2/sec).", cost:{ Be:1 }, effect:{ type:"auto_element", element:"Be", rate:2.0 } },
+    { id:"auto_b_1_basic",  name:"Boron Harvester",     desc:"Auto-generate Boron (2/sec).",     cost:{ B:1 },  effect:{ type:"auto_element", element:"B",  rate:2.0 } },
+    { id:"auto_c_1_basic",  name:"Carbon Harvester",    desc:"Auto-generate Carbon (2/sec).",    cost:{ C:1 },  effect:{ type:"auto_element", element:"C",  rate:2.0 } },
+    { id:"auto_n_1_basic",  name:"Nitrogen Harvester",  desc:"Auto-generate Nitrogen (2/sec).",  cost:{ N:1 },  effect:{ type:"auto_element", element:"N",  rate:2.0 } },
+    { id:"auto_o_1_basic",  name:"Oxygen Harvester",    desc:"Auto-generate Oxygen (2/sec).",    cost:{ O:1 },  effect:{ type:"auto_element", element:"O",  rate:2.0 } },
+    { id:"auto_f_1_basic",  name:"Fluorine Harvester",  desc:"Auto-generate Fluorine (2/sec).",  cost:{ F:1 },  effect:{ type:"auto_element", element:"F",  rate:2.0 } },
+    { id:"auto_ne_1_basic", name:"Neon Harvester",      desc:"Auto-generate Neon (2/sec).",      cost:{ Ne:1 }, effect:{ type:"auto_element", element:"Ne", rate:2.0 } },
 
-  // =========================
-  // BUILD UP TO BORON
-  // =========================
-  {
-    id: "auto_he_1",
-    name: "Helium Tap (Lv 1)",
-    desc: "Auto-generate Helium.",
-    cost: { He: 15, H: 40 },
-    effect: { type: "auto_element", element: "He", rate: 1.2 },
-  },
-  {
-    id: "auto_li_1",
-    name: "Lithium Seeder (Lv 1)",
-    desc: "Auto-generate Lithium.",
-    cost: { Li: 10, He: 35 },
-    effect: { type: "auto_element", element: "Li", rate: 1.1 },
-  },
-  {
-    id: "react_chance_1",
-    name: "Catalyst Coating I",
-    desc: "Increase reaction chance by +5% (absolute).",
-    cost: { He: 25, H: 80 },
-    effect: { type: "reaction_prob_add", add: 0.05 }
-  },
-  {
-    id: "auto_be_1",
-    name: "Beryllium Drill (Lv 1)",
-    desc: "Auto-generate Beryllium.",
-    cost: { Be: 8, Li: 25 },
-    effect: { type: "auto_element", element: "Be", rate: 0.8 },
-  },
-  {
-    id: "hydrogen_click_1",
-    name: "Hydrogen Excitation",
-    desc: "Increase chance to spawn Hydrogen on click.",
-    cost: { H: 60 },
-    effect: { type: "hydrogen_click_chance_add", add: 0.10 } // +10%
-  },
-  {
-    id: "auto_b_1",
-    name: "Boron Extractor (Lv 1)",
-    desc: "Auto-generate Boron.",
-    cost: { B: 7, Be: 20 },
-    effect: { type: "auto_element", element: "B", rate: 0.75 },
-  },
+    { id:"auto_na_1_basic", name:"Sodium Harvester",    desc:"Auto-generate Sodium (2/sec).",    cost:{ Na:1 }, effect:{ type:"auto_element", element:"Na", rate:2.0 } },
+    { id:"sodium_click_1_basic", name:"Salt Surge", desc:"On click, +5% chance to create Sodium.", cost:{ Na:1 }, effect:{ type:"sodium_click_chance_add", add:0.05 } },  
+    { id:"auto_mg_1_basic", name:"Magnesium Harvester", desc:"Auto-generate Magnesium (2/sec).", cost:{ Mg:1 }, effect:{ type:"auto_element", element:"Mg", rate:2.0 } },
+    { id:"auto_al_1_basic", name:"Aluminum Harvester",  desc:"Auto-generate Aluminum (2/sec).",  cost:{ Al:1 }, effect:{ type:"auto_element", element:"Al", rate:2.0 } },
+    { id:"auto_si_1_basic", name:"Silicon Harvester",   desc:"Auto-generate Silicon (2/sec).",   cost:{ Si:1 }, effect:{ type:"auto_element", element:"Si", rate:2.0 } },
+    { id:"auto_p_1_basic",  name:"Phosphorus Harvester",desc:"Auto-generate Phosphorus (2/sec).",cost:{ P:1 },  effect:{ type:"auto_element", element:"P",  rate:2.0 } },
+    { id:"auto_s_1_basic",  name:"Sulfur Harvester",    desc:"Auto-generate Sulfur (2/sec).",    cost:{ S:1 },  effect:{ type:"auto_element", element:"S",  rate:2.0 } },
+    { id:"auto_cl_1_basic", name:"Chlorine Harvester",  desc:"Auto-generate Chlorine (2/sec).",  cost:{ Cl:1 }, effect:{ type:"auto_element", element:"Cl", rate:2.0 } },
+    { id:"auto_ar_1_basic", name:"Argon Harvester",     desc:"Auto-generate Argon (2/sec).",     cost:{ Ar:1 }, effect:{ type:"auto_element", element:"Ar", rate:2.0 } },
 
-  // =========================
-  // MID: tier-2 boosts BEFORE carbon appears
-  // (still mostly using early elements + a little chain)
-  // =========================
-  {
-    id: "auto_he_2",
-    name: "Helium Tap (Lv 2)",
-    desc: "Faster Helium auto-generation.",
-    cost: { He: 60, H: 180, Li: 4 },
-    effect: { type: "auto_element", element: "He", rate: 2.8 },
-  },
-  {
-    id: "auto_li_2",
-    name: "Lithium Seeder (Lv 2)",
-    desc: "Faster Lithium auto-generation.",
-    cost: { Li: 40, He: 120, Be: 3 },
-    effect: { type: "auto_element", element: "Li", rate: 2.9 },
-  },
-  {
-    id: "auto_be_2",
-    name: "Beryllium Drill (Lv 2)",
-    desc: "Faster Beryllium auto-generation.",
-    cost: { Be: 30, Li: 90, B: 3 },
-    effect: { type: "auto_element", element: "Be", rate: 2.1 },
-  },
-  {
-    id: "react_chance_2",
-    name: "Catalyst Coating II",
-    desc: "Increase reaction chance by +8% (absolute).",
-    cost: { Li: 20, He: 60, H: 150 },
-    effect: { type: "reaction_prob_add", add: 0.08 }
-  },
-  {
-    id: "auto_b_2",
-    name: "Boron Extractor (Lv 2)",
-    desc: "Faster Boron auto-generation.",
-    cost: { B: 25, Be: 70, He: 35 }, // keep it early-element based
-    effect: { type: "auto_element", element: "B", rate: 2.0 },
-  },
+    { id:"auto_k_1_basic",  name:"Potassium Harvester", desc:"Auto-generate Potassium (2/sec).", cost:{ K:1 },  effect:{ type:"auto_element", element:"K",  rate:2.0 } },
+    { id:"potassium_click_1_basic", name:"Potassium Excitation", desc:"On click, +10% chance to create Potassium.", cost:{ K:1 }, effect:{ type:"potassium_click_chance_add", add:0.10 } },
+    { id:"auto_ca_1_basic", name:"Calcium Harvester",   desc:"Auto-generate Calcium (2/sec).",   cost:{ Ca:1 }, effect:{ type:"auto_element", element:"Ca", rate:2.0 } },
+    { id:"auto_sc_1_basic", name:"Scandium Harvester",  desc:"Auto-generate Scandium (2/sec).",  cost:{ Sc:1 }, effect:{ type:"auto_element", element:"Sc", rate:2.0 } },
+    { id:"auto_ti_1_basic", name:"Titanium Harvester",  desc:"Auto-generate Titanium (2/sec).",  cost:{ Ti:1 }, effect:{ type:"auto_element", element:"Ti", rate:2.0 } },
+    { id:"auto_v_1_basic",  name:"Vanadium Harvester",  desc:"Auto-generate Vanadium (2/sec).",  cost:{ V:1 },  effect:{ type:"auto_element", element:"V",  rate:2.0 } },
+    { id:"auto_cr_1_basic", name:"Chromium Harvester",  desc:"Auto-generate Chromium (2/sec).",  cost:{ Cr:1 }, effect:{ type:"auto_element", element:"Cr", rate:2.0 } },
+    { id:"auto_mn_1_basic", name:"Manganese Harvester", desc:"Auto-generate Manganese (2/sec).", cost:{ Mn:1 }, effect:{ type:"auto_element", element:"Mn", rate:2.0 } },
+    { id:"auto_fe_1_basic", name:"Iron Harvester",      desc:"Auto-generate Iron (2/sec).",      cost:{ Fe:1 }, effect:{ type:"auto_element", element:"Fe", rate:2.0 } },
+    { id:"auto_ni_1_basic", name:"Nickel Harvester",    desc:"Auto-generate Nickel (2/sec).",    cost:{ Ni:1 }, effect:{ type:"auto_element", element:"Ni", rate:2.0 } },
+    { id:"auto_cu_1_basic", name:"Copper Harvester",    desc:"Auto-generate Copper (2/sec).",    cost:{ Cu:1 }, effect:{ type:"auto_element", element:"Cu", rate:2.0 } },
+    { id:"auto_zn_1_basic", name:"Zinc Harvester",      desc:"Auto-generate Zinc (2/sec).",      cost:{ Zn:1 }, effect:{ type:"auto_element", element:"Zn", rate:2.0 } },
+    { id:"auto_ge_1_basic", name:"Germanium Harvester", desc:"Auto-generate Germanium (2/sec).", cost:{ Ge:1 }, effect:{ type:"auto_element", element:"Ge", rate:2.0 } },
+    { id:"auto_se_1_basic", name:"Selenium Harvester",  desc:"Auto-generate Selenium (2/sec).",  cost:{ Se:1 }, effect:{ type:"auto_element", element:"Se", rate:2.0 } },
+    { id:"auto_br_1_basic", name:"Bromine Harvester",   desc:"Auto-generate Bromine (2/sec).",   cost:{ Br:1 }, effect:{ type:"auto_element", element:"Br", rate:2.0 } },
+    { id:"auto_kr_1_basic", name:"Krypton Harvester",   desc:"Auto-generate Krypton (2/sec).",   cost:{ Kr:1 }, effect:{ type:"auto_element", element:"Kr", rate:2.0 } },
 
-  // =========================
-  // CARBON UNLOCK MOMENT
-  // =========================
-  {
-    id: "auto_c_1",
-    name: "Carbon Press (Lv 1)",
-    desc: "Auto-generate Carbon.",
-    cost: { C: 6, B: 25 },
-    effect: { type: "auto_element", element: "C", rate: 0.6 },
-  },
-  {
-    id: "hydrogen_click_2",
-    name: "Hydrogen Excitation 2",
-    desc: "Increase chance to spawn Hydrogen on click.",
-    cost: { H: 120 },
-    effect: { type: "hydrogen_click_chance_add", add: 0.25 } // +25%
-  },
-  {
-    id: "auto_h_3",
-    name: "Hydrogen Drip (Lv 3)",
-    desc: "High-output Hydrogen auto-generation (requires Carbon).",
-    cost: { H: 350, He: 40, C: 5 },
-    effect: { type: "auto_element", element: "H", rate: 10.3 },
-  },
-  {
-    id: "auto_c_2",
-    name: "Carbon Press (Lv 2)",
-    desc: "Faster Carbon auto-generation.",
-    cost: { C: 22, B: 80, He: 80 },
-    effect: { type: "auto_element", element: "C", rate: 0.3 },
-  },
+    { id:"auto_rb_1_basic", name:"Rubidium Harvester",  desc:"Auto-generate Rubidium (2/sec).",  cost:{ Rb:1 }, effect:{ type:"auto_element", element:"Rb", rate:2.0 } },
+    { id:"rubidium_click_1_basic", name:"Rubidium Excitation", desc:"On click, +10% chance to create Rubidium.", cost:{ Rb:1 }, effect:{ type:"rubidium_click_chance_add", add:0.10 } },
+    { id:"auto_sr_1_basic", name:"Strontium Harvester", desc:"Auto-generate Strontium (2/sec).", cost:{ Sr:1 }, effect:{ type:"auto_element", element:"Sr", rate:2.0 } },
+    { id:"auto_y_1_basic",  name:"Yttrium Harvester",   desc:"Auto-generate Yttrium (2/sec).",   cost:{ Y:1 },  effect:{ type:"auto_element", element:"Y",  rate:2.0 } },
+    { id:"auto_zr_1_basic", name:"Zirconium Harvester", desc:"Auto-generate Zirconium (2/sec).", cost:{ Zr:1 }, effect:{ type:"auto_element", element:"Zr", rate:2.0 } },
+    { id:"auto_nb_1_basic", name:"Niobium Harvester",   desc:"Auto-generate Niobium (2/sec).",   cost:{ Nb:1 }, effect:{ type:"auto_element", element:"Nb", rate:2.0 } },
+    { id:"auto_mo_1_basic", name:"Molybdenum Harvester",desc:"Auto-generate Molybdenum (2/sec).",cost:{ Mo:1 }, effect:{ type:"auto_element", element:"Mo", rate:2.0 } },
+    { id:"auto_ru_1_basic", name:"Ruthenium Harvester", desc:"Auto-generate Ruthenium (2/sec).", cost:{ Ru:1 }, effect:{ type:"auto_element", element:"Ru", rate:2.0 } },
+    { id:"auto_pd_1_basic", name:"Palladium Harvester", desc:"Auto-generate Palladium (2/sec).", cost:{ Pd:1 }, effect:{ type:"auto_element", element:"Pd", rate:2.0 } },
+    { id:"auto_ag_1_basic", name:"Silver Harvester",    desc:"Auto-generate Silver (2/sec).",    cost:{ Ag:1 }, effect:{ type:"auto_element", element:"Ag", rate:2.0 } },
+    { id:"auto_cd_1_basic", name:"Cadmium Harvester",   desc:"Auto-generate Cadmium (2/sec).",   cost:{ Cd:1 }, effect:{ type:"auto_element", element:"Cd", rate:2.0 } },
+    { id:"auto_sn_1_basic", name:"Tin Harvester",       desc:"Auto-generate Tin (2/sec).",       cost:{ Sn:1 }, effect:{ type:"auto_element", element:"Sn", rate:2.0 } },
+    { id:"auto_te_1_basic", name:"Tellurium Harvester", desc:"Auto-generate Tellurium (2/sec).", cost:{ Te:1 }, effect:{ type:"auto_element", element:"Te", rate:2.0 } },
+    { id:"auto_i_1_basic",  name:"Iodine Harvester",    desc:"Auto-generate Iodine (2/sec).",    cost:{ I:1 },  effect:{ type:"auto_element", element:"I",  rate:2.0 } },
+    { id:"auto_xe_1_basic", name:"Xenon Harvester",     desc:"Auto-generate Xenon (2/sec).",     cost:{ Xe:1 }, effect:{ type:"auto_element", element:"Xe", rate:2.0 } },
 
-  // =========================
-  // LATE: fill out the rest of the first 10
-  // =========================
-  {
-    id: "auto_n_1",
-    name: "Nitrogen Condenser (Lv 1)",
-    desc: "Auto-generate Nitrogen.",
-    cost: { N: 6, C: 15 },
-    effect: { type: "auto_element", element: "N", rate: 0.15 },
-  },
-  {
-    id: "auto_o_1",
-    name: "Oxygen Separator (Lv 1)",
-    desc: "Auto-generate Oxygen.",
-    cost: { O: 6, N: 15 },
-    effect: { type: "auto_element", element: "O", rate: 0.1 },
-  },
-  {
-    id: "auto_f_1",
-    name: "Fluorine Channeler (Lv 1)",
-    desc: "Auto-generate Fluorine.",
-    cost: { F: 6, O: 15 },
-    effect: { type: "auto_element", element: "F", rate: 0.12 },
-  },
-  {
-    id: "auto_ne_1",
-    name: "Neon Infuser (Lv 1)",
-    desc: "Auto-generate Neon.",
-    cost: { Ne: 6, F: 15 },
-    effect: { type: "auto_element", element: "Ne", rate: 0.08 },
-  },
+    { id:"auto_cs_1_basic", name:"Cesium Harvester",    desc:"Auto-generate Cesium (2/sec).",    cost:{ Cs:1 }, effect:{ type:"auto_element", element:"Cs", rate:2.0 } },
+    { id:"caesium_click_1_basic", name:"Cesium Excitation", desc:"On click, +10% chance to create Cesium.", cost:{ Cs:1 }, effect:{ type:"caesium_click_chance_add", add:0.10 } },
+    { id:"auto_ba_1_basic", name:"Barium Harvester",    desc:"Auto-generate Barium (2/sec).",    cost:{ Ba:1 }, effect:{ type:"auto_element", element:"Ba", rate:2.0 } },
+    { id:"auto_la_1_basic", name:"Lanthanum Harvester", desc:"Auto-generate Lanthanum (2/sec).", cost:{ La:1 }, effect:{ type:"auto_element", element:"La", rate:2.0 } },
+    { id:"auto_ce_1_basic", name:"Cerium Harvester",    desc:"Auto-generate Cerium (2/sec).",    cost:{ Ce:1 }, effect:{ type:"auto_element", element:"Ce", rate:2.0 } },
+    { id:"auto_pr_1_basic", name:"Praseodymium Harvester",desc:"Auto-generate Praseodymium (2/sec).",cost:{ Pr:1 },effect:{ type:"auto_element", element:"Pr", rate:2.0 } },
+    { id:"auto_nd_1_basic", name:"Neodymium Harvester", desc:"Auto-generate Neodymium (2/sec).", cost:{ Nd:1 }, effect:{ type:"auto_element", element:"Nd", rate:2.0 } },
+    { id:"auto_pm_1_basic", name:"Promethium Harvester",desc:"Auto-generate Promethium (2/sec).",cost:{ Pm:1 }, effect:{ type:"auto_element", element:"Pm", rate:2.0 } },
+    { id:"auto_sm_1_basic", name:"Samarium Harvester",  desc:"Auto-generate Samarium (2/sec).",  cost:{ Sm:1 }, effect:{ type:"auto_element", element:"Sm", rate:2.0 } },
+    { id:"auto_eu_1_basic", name:"Europium Harvester",  desc:"Auto-generate Europium (2/sec).",  cost:{ Eu:1 }, effect:{ type:"auto_element", element:"Eu", rate:2.0 } },
+    { id:"auto_gd_1_basic", name:"Gadolinium Harvester",desc:"Auto-generate Gadolinium (2/sec).",cost:{ Gd:1 }, effect:{ type:"auto_element", element:"Gd", rate:2.0 } },
+    { id:"auto_tb_1_basic", name:"Terbium Harvester",   desc:"Auto-generate Terbium (2/sec).",   cost:{ Tb:1 }, effect:{ type:"auto_element", element:"Tb", rate:2.0 } },
+    { id:"auto_dy_1_basic", name:"Dysprosium Harvester",desc:"Auto-generate Dysprosium (2/sec).",cost:{ Dy:1 }, effect:{ type:"auto_element", element:"Dy", rate:2.0 } },
+    { id:"auto_ho_1_basic", name:"Holmium Harvester",   desc:"Auto-generate Holmium (2/sec).",   cost:{ Ho:1 }, effect:{ type:"auto_element", element:"Ho", rate:2.0 } },
+    { id:"auto_er_1_basic", name:"Erbium Harvester",    desc:"Auto-generate Erbium (2/sec).",    cost:{ Er:1 }, effect:{ type:"auto_element", element:"Er", rate:2.0 } },
+    { id:"auto_tm_1_basic", name:"Thulium Harvester",   desc:"Auto-generate Thulium (2/sec).",   cost:{ Tm:1 }, effect:{ type:"auto_element", element:"Tm", rate:2.0 } },
+    { id:"auto_yb_1_basic", name:"Ytterbium Harvester", desc:"Auto-generate Ytterbium (2/sec).", cost:{ Yb:1 }, effect:{ type:"auto_element", element:"Yb", rate:2.0 } },
+    { id:"auto_lu_1_basic", name:"Lutetium Harvester",  desc:"Auto-generate Lutetium (2/sec).",  cost:{ Lu:1 }, effect:{ type:"auto_element", element:"Lu", rate:2.0 } },
 
-  // =========================
-  // LATE MID: tier-2 for (N/O/F/Ne)
-  // =========================
-  {
-    id: "auto_n_2",
-    name: "Nitrogen Condenser (Lv 2)",
-    desc: "Faster Nitrogen auto-generation.",
-    cost: { N: 22, C: 55, O: 2 },
-    effect: { type: "auto_element", element: "N", rate: 1.35 },
-  },
-  {
-    id: "auto_o_2",
-    name: "Oxygen Separator (Lv 2)",
-    desc: "Faster Oxygen auto-generation.",
-    cost: { O: 22, N: 55, F: 2 },
-    effect: { type: "auto_element", element: "O", rate: 1.2 },
-  },
-  {
-    id: "auto_f_2",
-    name: "Fluorine Channeler (Lv 2)",
-    desc: "Faster Fluorine auto-generation.",
-    cost: { F: 22, O: 55, Ne: 2 },
-    effect: { type: "auto_element", element: "F", rate: 2.02 },
-  },
-  {
-    id: "auto_ne_2",
-    name: "Neon Infuser (Lv 2)",
-    desc: "Faster Neon auto-generation.",
-    cost: { Ne: 22, F: 55 },
-    effect: { type: "auto_element", element: "Ne", rate: 7.018 },
-  },
+    { id:"auto_hf_1_basic", name:"Hafnium Harvester",   desc:"Auto-generate Hafnium (2/sec).",   cost:{ Hf:1 }, effect:{ type:"auto_element", element:"Hf", rate:2.0 } },
+    { id:"auto_w_1_basic",  name:"Tungsten Harvester",  desc:"Auto-generate Tungsten (2/sec).",  cost:{ W:1 },  effect:{ type:"auto_element", element:"W",  rate:2.0 } },
+    { id:"auto_os_1_basic", name:"Osmium Harvester",    desc:"Auto-generate Osmium (2/sec).",    cost:{ Os:1 }, effect:{ type:"auto_element", element:"Os", rate:2.0 } },
+    { id:"auto_pt_1_basic", name:"Platinum Harvester",  desc:"Auto-generate Platinum (2/sec).",  cost:{ Pt:1 }, effect:{ type:"auto_element", element:"Pt", rate:2.0 } },
+    { id:"auto_hg_1_basic", name:"Mercury Harvester",   desc:"Auto-generate Mercury (2/sec).",   cost:{ Hg:1 }, effect:{ type:"auto_element", element:"Hg", rate:2.0 } },
+    { id:"auto_pb_1_basic", name:"Lead Harvester",      desc:"Auto-generate Lead (2/sec).",      cost:{ Pb:1 }, effect:{ type:"auto_element", element:"Pb", rate:2.0 } },
+    { id:"auto_bi_1_basic", name:"Bismuth Harvester",   desc:"Auto-generate Bismuth (2/sec).",   cost:{ Bi:1 }, effect:{ type:"auto_element", element:"Bi", rate:2.0 } },
+    { id:"auto_po_1_basic", name:"Polonium Harvester",  desc:"Auto-generate Polonium (2/sec).",  cost:{ Po:1 }, effect:{ type:"auto_element", element:"Po", rate:2.0 } },
+    { id:"auto_at_1_basic", name:"Astatine Harvester",  desc:"Auto-generate Astatine (2/sec).",  cost:{ At:1 }, effect:{ type:"auto_element", element:"At", rate:2.0 } },
+    { id:"auto_rn_1_basic", name:"Radon Harvester",     desc:"Auto-generate Radon (2/sec).",     cost:{ Rn:1 }, effect:{ type:"auto_element", element:"Rn", rate:2.0 } },
 
-  // =========================
-  // ENDGAME (for first 5): Lv3 gated by advanced elements
-  // placed late so it feels like a payoff after full first-10 unlock
-  // =========================
-  {
-    id: "auto_he_3",
-    name: "Helium Tap (Lv 3)",
-    desc: "High-output Helium auto-generation (requires Nitrogen).",
-    cost: { He: 220, H: 400, N: 4 },
-    effect: { type: "auto_element", element: "He", rate: 15.5 },
-  },
-  {
-    id: "auto_li_3",
-    name: "Lithium Seeder (Lv 3)",
-    desc: "High-output Lithium auto-generation (requires Oxygen).",
-    cost: { Li: 160, He: 260, O: 4 },
-    effect: { type: "auto_element", element: "Li", rate: 12.22 },
-  },
-  {
-    id: "auto_be_3",
-    name: "Beryllium Drill (Lv 3)",
-    desc: "High-output Beryllium auto-generation (requires Fluorine).",
-    cost: { Be: 120, Li: 220, F: 3 },
-    effect: { type: "auto_element", element: "Be", rate: 8.14 },
-  },
-  {
-    id: "auto_b_3",
-    name: "Boron Extractor (Lv 3)",
-    desc: "High-output Boron auto-generation (requires Neon).",
-    cost: { B: 110, Be: 180, Ne: 3 },
-    effect: { type: "auto_element", element: "B", rate: 9.10 },
-  },
+    { id:"auto_fr_1_basic", name:"Francium Harvester",  desc:"Auto-generate Francium (2/sec).",  cost:{ Fr:1 }, effect:{ type:"auto_element", element:"Fr", rate:2.0 } },
+    { id:"francium_click_1_basic", name:"Francium Excitation", desc:"On click, +10% chance to create Francium.", cost:{ Fr:1 }, effect:{ type:"francium_click_chance_add", add:0.10 } },
+    { id:"auto_ra_1_basic", name:"Radium Harvester",    desc:"Auto-generate Radium (2/sec).",    cost:{ Ra:1 }, effect:{ type:"auto_element", element:"Ra", rate:2.0 } },
+    { id:"auto_ac_1_basic", name:"Actinium Harvester",  desc:"Auto-generate Actinium (2/sec).",  cost:{ Ac:1 }, effect:{ type:"auto_element", element:"Ac", rate:2.0 } },
+    { id:"auto_th_1_basic", name:"Thorium Harvester",   desc:"Auto-generate Thorium (2/sec).",   cost:{ Th:1 }, effect:{ type:"auto_element", element:"Th", rate:2.0 } },
+    { id:"auto_pa_1_basic", name:"Protactinium Harvester",desc:"Auto-generate Protactinium (2/sec).",cost:{ Pa:1 },effect:{ type:"auto_element", element:"Pa", rate:2.0 } },
+    { id:"auto_u_1_basic",  name:"Uranium Harvester",   desc:"Auto-generate Uranium (2/sec).",   cost:{ U:1 },  effect:{ type:"auto_element", element:"U",  rate:2.0 } },
 ];

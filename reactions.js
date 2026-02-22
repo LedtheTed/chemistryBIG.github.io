@@ -2,9 +2,13 @@
    Library/registry of possible reactions.
    Use getReaction(a, b) to look up a reaction, or access REACTIONS directly.
 */
-(function(global){
-  const _norm = s => String(s).trim().toLowerCase();
-  function pairKey(a,b){ const aa=_norm(a), bb=_norm(b); return aa<bb?`${aa}|${bb}`:`${bb}|${aa}`; }
+(function (global) {
+  const _norm = (s) => String(s).trim().toLowerCase();
+  function pairKey(a, b) {
+    const aa = _norm(a),
+      bb = _norm(b);
+    return aa < bb ? `${aa}|${bb}` : `${bb}|${aa}`;
+  }
 
   // Reaction definitions (library of all available reactions)
   const REACTION_DEFINITIONS = [
@@ -232,23 +236,23 @@
 
   // Build the REACTIONS Map from definitions
   const REACTIONS = new Map();
-  REACTION_DEFINITIONS.forEach(def => {
+  REACTION_DEFINITIONS.forEach((def) => {
     const key = pairKey(def.reactants[0], def.reactants[1]);
     REACTIONS.set(key, {
-      products: def.products.map(p => _norm(p)),
+      products: def.products.map((p) => _norm(p)),
       consumes: def.consumes,
       probability: def.probability,
-      note: def.note
+      note: def.note,
     });
   });
 
   // Build the DECAY_REACTIONS Map from definitions
   const DECAY_REACTIONS = new Map();
-  DECAY_DEFINITIONS.forEach(def => {
+  DECAY_DEFINITIONS.forEach((def) => {
     DECAY_REACTIONS.set(_norm(def.reactant), {
-      products: def.products.map(p => _norm(p)),
+      products: def.products.map((p) => _norm(p)),
       probability: def.probability,
-      note: def.note
+      note: def.note,
     });
   });
 
@@ -267,7 +271,10 @@
   }
 
   function getAllReactions() {
-    return Array.from(REACTIONS.entries()).map(([key, entry]) => ({ key, ...entry }));
+    return Array.from(REACTIONS.entries()).map(([key, entry]) => ({
+      key,
+      ...entry,
+    }));
   }
 
   global.ChemistryBIG = global.ChemistryBIG || {};

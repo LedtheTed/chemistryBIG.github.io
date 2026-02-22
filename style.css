@@ -1,3 +1,4 @@
+
 :root{
   --bg:#0f1724;
   --panel:#0b1220;
@@ -206,6 +207,14 @@ body{
   font-size:12px;
   margin-top:4px;
 }
+ .molecule-item.disappear {
+   animation: molecule-shrink-disappear 1s linear forwards;
+ }
+ @keyframes molecule-shrink-disappear {
+   0% { opacity: 1; transform: scale(1); }
+   80% { opacity: 0.5; transform: scale(0.5); }
+   100% { opacity: 0; transform: scale(0); display: none; }
+ }
 
 /* upgrade panel */
 
@@ -276,6 +285,11 @@ body{
   opacity:0.45;
   cursor:not-allowed;
 }
+
+  .upgrade-btn.unaffordable {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
 
 .upgrade-name{
   color:var(--muted);

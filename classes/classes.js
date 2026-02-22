@@ -1,4 +1,4 @@
-import { Particle } from "./particle.js";
+import { Particle }from "./particle.js";
 import { ElementBase } from "./ElementBase.js";
 import { Environment } from "./Environment.js";
 import { reactionFX, ReactionFX, triggerReactionEffect } from "./reaction.js";

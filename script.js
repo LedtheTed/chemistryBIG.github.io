@@ -419,12 +419,6 @@ function payCost(costMap) {
   }
 }
 
-function addElementCurrency(elementName, amount) {
-  const sym = normalizeSymbol(elementName);
-  window.ChemistryBIG.incrCounter(sym, amount);
-  updateElementCounter();
-  refreshUpgradeAffordability();
-}
 
 function applyUpgradeEffect(effect) {
   if (!effect) return;

@@ -4,21 +4,27 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>ChemistryBIG</title>
-  <link rel="stylesheet" href="style.css" >
+  <link rel="icon" type="image/x-icon" href="./favicon.ico">
+    <link rel="stylesheet" href="style.css" >
 </head>
 <body>
   <main class="center">
     <h2 class="title">ChemistryB.I.G.</h2>
     <section id="sim-area" class="sim-area" aria-label="Simulation area">
-        <canvas id="sim-canvas"></canvas>
-        <button id="collect-all-btn" type="button">Collect All</button>
-        <button id="spawn-amount-btn" type="button">Add Amount: 1</button>
-        <div id="spawn-buttons" class="spawn-buttons"></div>
+        <canvas id="sim-canvas" class="sim-canvas"></canvas>
         <div id="right-panel" class="right-panel">
-            <div id="element-counter" class="element-counter">
-                <h3>Element Count</h3>
-                <div id="counter-list" class="counter-list"></div>
-            </div>
+
+        <!-- ELEMENT COUNTS + ADD BUTTONS (same panel) -->
+        <div id="element-panel" class="element-counter" aria-label="Elements">
+          <h3>Elements</h3>
+          <!-- Top controls live inside the same panel -->
+          <div class="control-buttons">
+            <button id="collect-all-btn" type="button">Collect All</button>
+            <button id="spawn-amount-btn" type="button">Add Amount: 1</button>
+          </div>
+          <!-- This will be a list of rows: [Add button] [Counter item] -->
+          <div id="counter-add-list" class="counter-add-list"></div>
+        </div>
             <div id="molecules-panel" class="molecules-panel">
                 <h3>Molecules</h3>
                 <div id="molecules-list" class="molecules-list"></div>

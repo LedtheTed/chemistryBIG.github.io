@@ -1,6 +1,6 @@
-    // import { Environment } from "./environment.js";
-    import { Particle, ElementBase, Environment, reactionFX, triggerReactionEffect } from "./classes/classes.js";
-    import { UPGRADES } from "./classes/upgrades.js";
+// import { Environment } from "./environment.js";
+import { Particle, ElementBase, Environment } from "./classes/classes.js";
+import { UPGRADES } from "./classes/upgrades.js";
 
 let canvas = document.getElementById("sim-canvas");
 const ctx = canvas.getContext("2d");
@@ -25,6 +25,10 @@ const REACTION_SPEED_BONUS_MAX = 0.35; // max +35% absolute probability (clamped
     // helper
     function clamp01(x) {
         return Math.max(0, Math.min(1, x));
+    }
+
+    function formatCount(x) {
+        return Number.isInteger(x) ? x : x.toFixed(1);
     }
 
     function spawnSimOnly(symbol, x, y) {
@@ -55,7 +59,7 @@ const REACTION_SPEED_BONUS_MAX = 0.35; // max +35% absolute probability (clamped
             spawnSimOnly(sym, cx + jitterX, cy + jitterY);
         }
 
-        updateElementCounter();
+        requestCounterUIRefresh();
         refreshUpgradeAffordability?.();
     }
 
@@ -69,7 +73,7 @@ const REACTION_SPEED_BONUS_MAX = 0.35; // max +35% absolute probability (clamped
         spawnAmount = SPAWN_AMOUNTS[spawnAmountIndex];
 
         spawnAmtBtn.textContent = `Add Amount: ${spawnAmount}`;
-        requestSpawnButtonsRefresh();
+        requestCounterUIRefresh();
         });
     }
     let spawnButtonsScheduled = false;
@@ -266,95 +270,95 @@ window.ChemistryBIG.spendCounter = function (name, amount = 1) {
   return next;
 };
 
-    // Collision detection between elements
-    function checkCollisions() {
-        const n = elements.length;            // snapshot length
-        const toRemove = new Set();           // Track indices to remove
+// Collision detection between elements
+function checkCollisions() {
+  const n = elements.length; // snapshot length
+  const toRemove = new Set(); // Track indices to remove
 
-        for (let i = 0; i < n; i++) {
-            const e1 = elements[i];
-            if (!e1) continue;
+  for (let i = 0; i < n; i++) {
+    const e1 = elements[i];
+    if (!e1) continue;
 
-            for (let j = i + 1; j < n; j++) {
-            const e2 = elements[j];
-            if (!e2) continue;
+    for (let j = i + 1; j < n; j++) {
+      const e2 = elements[j];
+      if (!e2) continue;
 
-            // Calculate distance between centers
-            const dx = e2.x - e1.x;
-            const dy = e2.y - e1.y;
-            const distance = Math.sqrt(dx * dx + dy * dy);
+      // Calculate distance between centers
+      const dx = e2.x - e1.x;
+      const dy = e2.y - e1.y;
+      const distance = Math.sqrt(dx * dx + dy * dy);
 
-            // Check if collision occurred (distance < sum of sizes)
-            if (distance < e1.size + e2.size) {
-                // Calculate speed magnitudes
-                const speed1 = Math.sqrt(e1.vx * e1.vx + e1.vy * e1.vy);
-                const speed2 = Math.sqrt(e2.vx * e2.vx + e2.vy * e2.vy);
-                const combinedSpeed = speed1 + speed2;
+      // Check if collision occurred (distance < sum of sizes)
+      if (distance < e1.size + e2.size) {
+        // Calculate speed magnitudes
+        const speed1 = Math.sqrt(e1.vx * e1.vx + e1.vy * e1.vy);
+        const speed2 = Math.sqrt(e2.vx * e2.vx + e2.vy * e2.vy);
+        const combinedSpeed = speed1 + speed2;
 
-                // Calculate collision angle
-                const angle = Math.atan2(dy, dx);
+        // Calculate collision angle
+        const angle = Math.atan2(dy, dx);
 
-                // Split combined speed and send in opposite directions
-                const splitSpeed = combinedSpeed / 2;
-                e1.vx = -Math.cos(angle) * splitSpeed;
-                e1.vy = -Math.sin(angle) * splitSpeed;
-                e2.vx = Math.cos(angle) * splitSpeed;
-                e2.vy = Math.sin(angle) * splitSpeed;
+        // Split combined speed and send in opposite directions
+        const splitSpeed = combinedSpeed / 2;
+        e1.vx = -Math.cos(angle) * splitSpeed;
+        e1.vy = -Math.sin(angle) * splitSpeed;
+        e2.vx = Math.cos(angle) * splitSpeed;
+        e2.vy = Math.sin(angle) * splitSpeed;
 
-                // Separate elements to prevent overlap
-                const overlap = e1.size + e2.size - distance;
-                if (overlap > 0 && distance > 0) {
-                const separationX = (dx / distance) * (overlap / 2 + 1);
-                const separationY = (dy / distance) * (overlap / 2 + 1);
+        // Separate elements to prevent overlap
+        const overlap = e1.size + e2.size - distance;
+        if (overlap > 0 && distance > 0) {
+          const separationX = (dx / distance) * (overlap / 2 + 1);
+          const separationY = (dy / distance) * (overlap / 2 + 1);
 
-                e1.x -= separationX;
-                e1.y -= separationY;
-                e2.x += separationX;
-                e2.y += separationY;
-                }
-
-                // Check for reaction after collision is handled
-                const reaction = window.ChemistryBIG?.getReaction?.(e1.name, e2.name);
-                if (reaction) {
-                    const baseP = reaction.probability ?? 0;
-
-                    // Linear speed-based bonus (starts at threshold, maxes at REACTION_SPEED_MAX)
-                    const t = clamp01(
-                        (combinedSpeed - REACTION_SPEED_THRESHOLD) /
-                        (REACTION_SPEED_MAX - REACTION_SPEED_THRESHOLD)
-                    );
-                    const bonus = t * REACTION_SPEED_BONUS_MAX;
-
-                    // Final probability (clamped to 1)
-                    const finalP = Math.min(1, baseP + bonus + (reactionProbBonus || 0));
-
-                    if (Math.random() < finalP) {
-                        const products = Array.isArray(reaction.products) ? reaction.products : [];
-
-                        // Collision point (midpoint between reactants)
-                        const collisionX = (e1.x + e2.x) / 2;
-                        const collisionY = (e1.y + e2.y) / 2;
-
-                        triggerReactionEffect(collisionX, collisionY, reaction, e1, e2, particles);
-                        
-                        for (const productName of products) {
-                            spawnElement(productName, collisionX, collisionY);
-                        }
-
-                        // consume reactants:
-                        toRemove.add(i);
-                        toRemove.add(j);
-
-                        // decrement counters for consumed reactants (single counter truth)
-                        //window.ChemistryBIG.spendCounter(e1.name, 1);
-                        //window.ChemistryBIG.spendCounter(e2.name, 1);
-
-                        updateElementCounter();
-                    }
-                }
-            }
+          e1.x -= separationX;
+          e1.y -= separationY;
+          e2.x += separationX;
+          e2.y += separationY;
         }
+
+        // Check for reaction after collision is handled
+        const reaction = window.ChemistryBIG?.getReaction?.(e1.name, e2.name);
+        if (reaction) {
+          const baseP = reaction.probability ?? 0;
+
+          // Linear speed-based bonus (starts at threshold, maxes at REACTION_SPEED_MAX)
+          const t = clamp01(
+            (combinedSpeed - REACTION_SPEED_THRESHOLD) /
+              (REACTION_SPEED_MAX - REACTION_SPEED_THRESHOLD),
+          );
+          const bonus = t * REACTION_SPEED_BONUS_MAX;
+
+          // Final probability (clamped to 1)
+          const finalP = Math.min(1, baseP + bonus + (reactionProbBonus || 0));
+
+          if (Math.random() < finalP) {
+            const products = Array.isArray(reaction.products)
+              ? reaction.products
+              : [];
+
+            // Collision point (midpoint between reactants)
+            const collisionX = (e1.x + e2.x) / 2;
+            const collisionY = (e1.y + e2.y) / 2;
+
+            for (const productName of products) {
+              spawnElement(productName, collisionX, collisionY);
+            }
+
+            // consume reactants:
+            toRemove.add(i);
+            toRemove.add(j);
+
+            // decrement counters for consumed reactants (single counter truth)
+            //window.ChemistryBIG.spendCounter(e1.name, 1);
+            //window.ChemistryBIG.spendCounter(e2.name, 1);
+
+            updateElementCounter();
+          }
+        }
+      }
     }
+  }
 
   // Remove marked elements in reverse order to preserve indices
   const indicesToRemove = Array.from(toRemove).sort((a, b) => b - a);
@@ -481,17 +485,55 @@ function updateElementCounter() {
     const displayCount = Number.isInteger(raw) ? raw : raw.toFixed(1);
     const def = window.ChemistryBIG.getElementDefinition(elementName);
 
+            // left Add button
+            const addBtn = document.createElement("button");
+            addBtn.type = "button";
+            addBtn.className = "spawn-btn";
+            addBtn.dataset.element = sym;
+
+            // right counter item
             const counterItem = document.createElement("div");
             counterItem.className = "counter-item";
-            counterItem.style.borderLeftColor = def.color;
+            counterItem.style.borderLeftColor = def.color || "#7dd3fc";
             counterItem.style.borderLeftWidth = "3px";
             counterItem.innerHTML = `
-            <span class="element-name">${elementName}</span>
-            <span class="element-count">${displayCount}</span>
+                <span class="element-name">${sym}</span>
+                <span class="element-count">0</span>
             `;
-            counterList.appendChild(counterItem);
+
+            row.appendChild(addBtn);
+            row.appendChild(counterItem);
+            container.appendChild(row);
+            }
+
+            lastCounterSignature = signature;
         }
-        requestSpawnButtonsRefresh();
+
+        // Always update text + disabled state without rebuilding DOM
+        const rows = container.querySelectorAll(".counter-add-row");
+        rows.forEach((row) => {
+            const sym = row.dataset.element;
+            const raw = window.ChemistryBIG.getCounter(sym);
+            const displayCount = formatCount(raw);
+
+            const btn = row.querySelector("button.spawn-btn");
+            const countEl = row.querySelector(".element-count");
+
+            if (countEl) countEl.textContent = displayCount;
+
+            if (btn) {
+            const canAdd = raw >= spawnAmount && !paused;
+            btn.disabled = !canAdd;
+            btn.classList.toggle("unaffordable", !canAdd);
+            btn.innerHTML = `
+                <span class="upgrade-name">Add</span>
+                <span class="upgrade-cost">x${spawnAmount}</span>
+            `;
+            }
+        });
+
+        // keep upgrades in sync
+        refreshUpgradeAffordability?.();
     }
 
 // element counter -----------------------------
@@ -742,9 +784,9 @@ function showElementTooltip(symbol) {
   tooltipOpen = true;
   pauseGame();
 
-        const def = window.ChemistryBIG?.getElementDefinition?.(symbol) || {};
-        const niceName = def.fullName || def.displayName || def.name || symbol;
-        const desc = def.desc || def.description || "New element discovered!";
+  const def = window.ChemistryBIG?.getElementDefinition?.(symbol) || {};
+  const niceName = def.displayName || def.name || symbol;
+  const desc = def.desc || def.description || "New element discovered!";
 
   const overlay = document.createElement("div");
   overlay.id = "element-tooltip-overlay";
@@ -796,35 +838,36 @@ let Game = {
   deltaTime: 0,
   frame: 0,
 
-    update: function () {
-        // update elements
-        elements.forEach(element => {
-        element.update(canvas);
-        });
-        // check collisions between elements
-        checkCollisions();
-        // check for decay reactions
-        checkDecays();
-        // update particles
-        particles = particles.filter(p => {
-        p.update();
-        
-        const dt = 1 / 60;
-        for (let i = reactionFX.length - 1; i >= 0; i--) {
-            if (!reactionFX[i].update(dt)) reactionFX.splice(i, 1);
-        }
-        return p.life > 0;
-        });
-    },
+  update: function () {
+    // update elements
+    elements.forEach((element) => {
+      element.update(canvas);
+    });
+    // check collisions between elements
+    checkCollisions();
+    // check for decay reactions
+    checkDecays();
+    // update particles
+    particles = particles.filter((p) => {
+      p.update();
+      return p.life > 0;
+    });
+  },
 
   draw: () => {
     Game.lastRender = Date.now();
 
-        // background first
-        drawBackground();
-        reactionFX.forEach(fx => fx.draw(ctx));
-        elements.forEach(e => e.draw(ctx));
-        particles.forEach(p => p.draw(ctx));
+    // background first
+    drawBackground();
+
+    // draw elements
+    elements.forEach((element) => {
+      element.draw(ctx);
+    });
+    // draw particles
+    particles.forEach((particle) => {
+      particle.draw(ctx);
+    });
 
     // debug(`Frame ${Game.frame}: Loaded in ${Game.deltaTime} ms`);
   },

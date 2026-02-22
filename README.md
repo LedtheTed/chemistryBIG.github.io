@@ -33,5 +33,5 @@ Created during the 24 hour HackHer(413) hackathon 2026.
 
 ## Credits
 
-- Created by Xing-Wei, Keith, and Own at HackHer(413) 2026.
+- Created by Xing-Wei, Keith, and Owen at HackHer(413) 2026.
 - Special thanks to Ken for chemistry-related consulting information.

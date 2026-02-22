@@ -10,15 +10,20 @@
 *{box-sizing:border-box}
 html,body{height:100%}
 body{
-  margin:0;
-  font-family:Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-  background: radial-gradient( circle at 10% 10%, rgba(45,212,191,0.06), transparent 10%),
-              linear-gradient(180deg, rgba(10,14,23,1) 0%, rgba(6,10,17,1) 100%);
-  color:#e6eef8;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  padding:40px 20px;
+    margin:0;
+    font-family:Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    background: radial-gradient( circle at 10% 10%, rgba(45,212,191,0.06), transparent 10%),
+                linear-gradient(180deg, rgba(10,14,23,1) 0%, rgba(6,10,17,1) 100%);
+    color:#e6eef8;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:40px 20px;
+    background-image: url("./lab_background.jpg");
+    background-size: cover;        /* fills entire screen */
+    background-position: center;   /* centers image */
+    background-repeat: no-repeat;  /* prevents tiling */
+    background-attachment: fixed;  /* subtle parallax effect */
 }
 .center{display:flex;flex-direction:column;align-items:center;width:100%;max-width:1100px}
 
@@ -344,7 +349,82 @@ body{
   background:rgba(45,212,191,0.18);
 }
 
-#collect-all-btn, #spawn-amount-btn { display:block; margin: 8px 0; }
-.spawn-buttons { display:flex; flex-wrap:wrap; gap:6px; }
-.spawn-btn { padding:6px 10px; border-radius:8px; }
-.spawn-btn.unaffordable { opacity:0.45; cursor:not-allowed; }
+/* ===== Make Collect + Add Amount + Spawn buttons match Upgrade buttons ===== */
+
+#collect-all-btn,
+#spawn-amount-btn,
+.spawn-btn {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+
+  width:100%;
+  padding:10px 12px;
+  border-radius:10px;
+
+  background:rgba(125,211,252,0.05);
+  border:1px solid rgba(125,211,252,0.12);
+  color:#e6eef8;
+
+  font-size:13px;
+  font-weight:600;
+
+  cursor:pointer;
+  transition: background 0.2s ease, border-color 0.2s ease, transform 0.05s ease;
+}
+
+#collect-all-btn:hover,
+#spawn-amount-btn:hover,
+.spawn-btn:hover{
+  background:rgba(125,211,252,0.10);
+  border-color:rgba(125,211,252,0.22);
+}
+
+#collect-all-btn:active,
+#spawn-amount-btn:active,
+.spawn-btn:active{
+  transform: translateY(1px);
+}
+
+#collect-all-btn:disabled,
+#spawn-amount-btn:disabled,
+.spawn-btn:disabled{
+  opacity:0.45;
+  cursor:not-allowed;
+}
+
+/* keep your unaffordable class behavior consistent */
+.spawn-btn.unaffordable{
+  opacity:0.45;
+  cursor:not-allowed;
+}
+
+.control-buttons{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  margin-bottom:14px;
+}
+
+.counter-add-list{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+.counter-add-row{
+  display:flex;
+  gap:10px;
+  align-items:center;
+}
+
+.counter-add-row .spawn-btn{
+  width:92px;        /* fixed so it lines up */
+  flex-shrink:0;
+  justify-content:space-between;
+}
+
+.counter-add-row .counter-item{
+  flex:1;            /* counter takes remaining space */
+}

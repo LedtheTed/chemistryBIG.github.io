@@ -1,5 +1,5 @@
     // import { Environment } from "./environment.js";
-    import { Particle, ElementBase, Environment} from "./classes/classes.js";
+    import { Particle, ElementBase, Environment, reactionFX, triggerReactionEffect } from "./classes/classes.js";
     import { UPGRADES } from "./classes/upgrades.js";
 
     let canvas = document.getElementById("sim-canvas");
@@ -24,7 +24,7 @@
 
     // helper
     function clamp01(x) {
-    return Math.max(0, Math.min(1, x));
+        return Math.max(0, Math.min(1, x));
     }
 
     function spawnSimOnly(symbol, x, y) {
@@ -265,91 +265,91 @@
 
     // Collision detection between elements
     function checkCollisions() {
-    const n = elements.length;            // snapshot length
-    const toRemove = new Set();           // Track indices to remove
+        const n = elements.length;            // snapshot length
+        const toRemove = new Set();           // Track indices to remove
 
-    for (let i = 0; i < n; i++) {
-        const e1 = elements[i];
-        if (!e1) continue;
+        for (let i = 0; i < n; i++) {
+            const e1 = elements[i];
+            if (!e1) continue;
 
-        for (let j = i + 1; j < n; j++) {
-        const e2 = elements[j];
-        if (!e2) continue;
+            for (let j = i + 1; j < n; j++) {
+            const e2 = elements[j];
+            if (!e2) continue;
 
-        // Calculate distance between centers
-        const dx = e2.x - e1.x;
-        const dy = e2.y - e1.y;
-        const distance = Math.sqrt(dx * dx + dy * dy);
+            // Calculate distance between centers
+            const dx = e2.x - e1.x;
+            const dy = e2.y - e1.y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
 
-        // Check if collision occurred (distance < sum of sizes)
-        if (distance < e1.size + e2.size) {
-            // Calculate speed magnitudes
-            const speed1 = Math.sqrt(e1.vx * e1.vx + e1.vy * e1.vy);
-            const speed2 = Math.sqrt(e2.vx * e2.vx + e2.vy * e2.vy);
-            const combinedSpeed = speed1 + speed2;
+            // Check if collision occurred (distance < sum of sizes)
+            if (distance < e1.size + e2.size) {
+                // Calculate speed magnitudes
+                const speed1 = Math.sqrt(e1.vx * e1.vx + e1.vy * e1.vy);
+                const speed2 = Math.sqrt(e2.vx * e2.vx + e2.vy * e2.vy);
+                const combinedSpeed = speed1 + speed2;
 
-            // Calculate collision angle
-            const angle = Math.atan2(dy, dx);
+                // Calculate collision angle
+                const angle = Math.atan2(dy, dx);
 
-            // Split combined speed and send in opposite directions
-            const splitSpeed = combinedSpeed / 2;
-            e1.vx = -Math.cos(angle) * splitSpeed;
-            e1.vy = -Math.sin(angle) * splitSpeed;
-            e2.vx = Math.cos(angle) * splitSpeed;
-            e2.vy = Math.sin(angle) * splitSpeed;
+                // Split combined speed and send in opposite directions
+                const splitSpeed = combinedSpeed / 2;
+                e1.vx = -Math.cos(angle) * splitSpeed;
+                e1.vy = -Math.sin(angle) * splitSpeed;
+                e2.vx = Math.cos(angle) * splitSpeed;
+                e2.vy = Math.sin(angle) * splitSpeed;
 
-            // Separate elements to prevent overlap
-            const overlap = e1.size + e2.size - distance;
-            if (overlap > 0 && distance > 0) {
-            const separationX = (dx / distance) * (overlap / 2 + 1);
-            const separationY = (dy / distance) * (overlap / 2 + 1);
+                // Separate elements to prevent overlap
+                const overlap = e1.size + e2.size - distance;
+                if (overlap > 0 && distance > 0) {
+                const separationX = (dx / distance) * (overlap / 2 + 1);
+                const separationY = (dy / distance) * (overlap / 2 + 1);
 
-            e1.x -= separationX;
-            e1.y -= separationY;
-            e2.x += separationX;
-            e2.y += separationY;
-            }
-
-            // Check for reaction after collision is handled
-            const reaction = window.ChemistryBIG?.getReaction?.(e1.name, e2.name);
-            if (reaction) {
-            const baseP = reaction.probability ?? 0;
-
-            // Linear speed-based bonus (starts at threshold, maxes at REACTION_SPEED_MAX)
-            const t = clamp01(
-                (combinedSpeed - REACTION_SPEED_THRESHOLD) /
-                (REACTION_SPEED_MAX - REACTION_SPEED_THRESHOLD)
-            );
-            const bonus = t * REACTION_SPEED_BONUS_MAX;
-
-            // Final probability (clamped to 1)
-            const finalP = Math.min(1, baseP + bonus + (reactionProbBonus || 0));
-
-            if (Math.random() < finalP) {
-                const products = Array.isArray(reaction.products) ? reaction.products : [];
-
-                // Collision point (midpoint between reactants)
-                const collisionX = (e1.x + e2.x) / 2;
-                const collisionY = (e1.y + e2.y) / 2;
-
-                
-                for (const productName of products) {
-                    spawnElement(productName, collisionX, collisionY);
+                e1.x -= separationX;
+                e1.y -= separationY;
+                e2.x += separationX;
+                e2.y += separationY;
                 }
 
-                    // consume reactants:
-                    toRemove.add(i);
-                    toRemove.add(j);
+                // Check for reaction after collision is handled
+                const reaction = window.ChemistryBIG?.getReaction?.(e1.name, e2.name);
+                if (reaction) {
+                    const baseP = reaction.probability ?? 0;
 
-                    // decrement counters for consumed reactants (single counter truth)
-                    //window.ChemistryBIG.spendCounter(e1.name, 1);
-                    //window.ChemistryBIG.spendCounter(e2.name, 1);
+                    // Linear speed-based bonus (starts at threshold, maxes at REACTION_SPEED_MAX)
+                    const t = clamp01(
+                        (combinedSpeed - REACTION_SPEED_THRESHOLD) /
+                        (REACTION_SPEED_MAX - REACTION_SPEED_THRESHOLD)
+                    );
+                    const bonus = t * REACTION_SPEED_BONUS_MAX;
 
-                    updateElementCounter();
-            
+                    // Final probability (clamped to 1)
+                    const finalP = Math.min(1, baseP + bonus + (reactionProbBonus || 0));
+
+                    if (Math.random() < finalP) {
+                        const products = Array.isArray(reaction.products) ? reaction.products : [];
+
+                        // Collision point (midpoint between reactants)
+                        const collisionX = (e1.x + e2.x) / 2;
+                        const collisionY = (e1.y + e2.y) / 2;
+
+                        triggerReactionEffect(collisionX, collisionY, reaction, e1, e2, particles);
+                        
+                        for (const productName of products) {
+                            spawnElement(productName, collisionX, collisionY);
+                        }
+
+                        // consume reactants:
+                        toRemove.add(i);
+                        toRemove.add(j);
+
+                        // decrement counters for consumed reactants (single counter truth)
+                        //window.ChemistryBIG.spendCounter(e1.name, 1);
+                        //window.ChemistryBIG.spendCounter(e2.name, 1);
+
+                        updateElementCounter();
+                    }
+                }
             }
-            }
-        }
         }
     }
 
@@ -810,6 +810,11 @@
         // update particles
         particles = particles.filter(p => {
         p.update();
+
+        const dt = 1 / 60;
+        for (let i = reactionFX.length - 1; i >= 0; i--) {
+            if (!reactionFX[i].update(dt)) reactionFX.splice(i, 1);
+        }
         return p.life > 0;
         });
     },
@@ -819,15 +824,9 @@
 
         // background first
         drawBackground();
-
-        // draw elements
-        elements.forEach(element => {
-        element.draw(ctx);
-        });
-        // draw particles
-        particles.forEach(particle => {
-        particle.draw(ctx);
-        });
+        reactionFX.forEach(fx => fx.draw(ctx));
+        elements.forEach(e => e.draw(ctx));
+        particles.forEach(p => p.draw(ctx));
 
         // debug(`Frame ${Game.frame}: Loaded in ${Game.deltaTime} ms`);
     },

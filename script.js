@@ -810,7 +810,7 @@
         // update particles
         particles = particles.filter(p => {
         p.update();
-
+        
         const dt = 1 / 60;
         for (let i = reactionFX.length - 1; i >= 0; i--) {
             if (!reactionFX[i].update(dt)) reactionFX.splice(i, 1);

@@ -657,7 +657,7 @@ let Game = {
     });
   },
 
-  draw:  () => {
+  draw: () => {
     Game.lastRender = Date.now();
 
     // background first

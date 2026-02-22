@@ -396,7 +396,7 @@ function checkDecays() {
   if (indicesToRemove.length > 0) updateElementCounter();
 }
 
-    let hydrogenClickChance = 0.1;
+    let hydrogenClickChance = 1;
     let sodiumClickChance = 0.0;
     let potassiumClickChance = 0.0;
     let rubidiumClickChance = 0.0;

@@ -742,7 +742,7 @@
         pauseGame();
 
         const def = window.ChemistryBIG?.getElementDefinition?.(symbol) || {};
-        const niceName = def.displayName || def.name || symbol;
+        const niceName = def.fullName || def.displayName || def.name || symbol;
         const desc = def.desc || def.description || "New element discovered!";
 
         const overlay = document.createElement("div");

@@ -353,7 +353,7 @@ body{
   background:rgba(45,212,191,0.18);
 }
 
-#collect-all-btn, #spawn-amount-btn { margin: 8px 0; }
-.spawn-buttons { display:flex; flex-wrap:wrap; gap:6px; }
+#collect-all-btn, #spawn-amount-btn {width: 100px; height: 50px; margin: 1px 1px; }
+.spawn-buttons { width: 100px; height: 50px; gap:6px; }
 .spawn-btn { padding:6px 10px; border-radius:8px; }
 .spawn-btn.unaffordable { opacity:0.45; cursor:not-allowed; }

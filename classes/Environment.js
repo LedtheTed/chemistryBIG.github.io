@@ -162,6 +162,8 @@ export class Environment {
 
     // increment using the actual created symbol
     window.ChemistryBIG.incrCounter(e.name, 1);
+    const UPGRADE_WINDOW_SIZE = 5;
+    let availableUpgrades = UPGRADES.slice();
 
     return e;
   }

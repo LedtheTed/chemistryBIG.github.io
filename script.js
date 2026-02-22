@@ -313,7 +313,7 @@ function payCost(costMap) {
             break;
         }
     }
-
+const availableUpgrades = UPGRADES.slice();
 function setupUpgradeClicks() {
   const list = document.getElementById("upgrades-list");
   if (!list) return;
@@ -357,7 +357,7 @@ function renderUpgradesPanel() {
   list.innerHTML = "";
 
   // Show the first N remaining upgrades
-  const slice = availableUpgrades.slice(0, UPGRADE_WINDOW_SIZE);
+  const slice = availableUpgrades.slice(0, 5);
 
   for (const up of slice) {
     const btn = document.createElement("button");

@@ -1,29 +1,14 @@
 import { ElementBase, Environment } from "./classes/classes.js";
 import { UPGRADES } from "./classes/upgrades.js";
 
-let mainEnvironment = new Environment();
-let environments = [mainEnvironment];
-mainEnvironment.initializeCanvas(document.getElementById("sim-main"), 600, 600);
-mainEnvironment.canvas.classList.add("main-canvas");
-mainEnvironment.canvas.id = "sim-canvas-main";
-
-mainEnvironment.setBGImage("./space_texture.jpg");
 let DEBUG = true; // switch this to true/false depending on
 let paused = false;
+
 
 // discovered elements tooltips
 const discoveredElements = new Set();
 const discoveryQueue = [];
 let tooltipOpen = false;
-
-function makeEnv() {
-  let asdfas = new Environment();
-  asdfas.initializeCanvas(document.getElementById("sim-other"), 500, 200);
-  environments.push(asdfas);
-}
-for (let i = 0; i < 3; i++) {
-  makeEnv();
-}
 
 // Register ElementBase globally
 window.ChemistryBIG = window.ChemistryBIG || {};
@@ -194,12 +179,12 @@ function applyUpgradeEffect(effect) {
       reactionProbBonus += effect.add;
       break;
     case "hydrogen_click_chance_add":
-      hydrogenClickChance += effect.add;
-      hydrogenClickChance = Math.min(hydrogenClickChance, 0.95); // cap at 95%
+      click_chance["H"] += effect.add;
+      click_chance["H"] = Math.min(click_chance["H"], 0.95); // cap at 95%
       break;
     case "sodium_click_chance_add":
-      sodiumClickChance += effect.add;
-      sodiumClickChance = Math.min(sodiumClickChance, 0.5); // cap at 50%
+      click_chance["Na"] += effect.add;
+      click_chance["Na"] = Math.min(click_chance["Na"], 0.5); // cap at 50%
       break;
   }
 }
@@ -392,17 +377,19 @@ let Game = {
   lastRender: Date.now(),
   deltaTime: 0,
   frame: 0,
+  environments: [],
   click_chances: {
-    hydrogenClickChance: 0.1,
-    sodiumClickChance: 0.0,
-    potassiumClickChance: 0.0,
-    rubidiumClickChance: 0.0,
-    cesiumClickChance: 0.0,
-    franciumClickChance: 0.0
+    "H": 0.1,
+    "He": 0.0,
+    "Na": 0.0,
+    "K": 0.0,
+    "Rb": 0.0,
+    "Cs": 0.0,
+    "Fr": 0.0
   },
-  update: function () {
+  update() {
     // update environments
-    environments.forEach((environment) => {
+    this.environments.forEach((environment) => {
       environment.updateElements();
       environment.checkCollisions();
       environment.checkDecays();
@@ -410,11 +397,11 @@ let Game = {
     });
   },
 
-  draw: () => {
+  draw() {
     Game.lastRender = Date.now();
 
     // background first
-    environments.forEach((environment) => {
+    this.environments.forEach((environment) => {
       environment.drawCanvasBackground();
       environment.drawElements();
       environment.drawParticles();
@@ -423,14 +410,14 @@ let Game = {
     // debug(`Frame ${Game.frame}: Loaded in ${Game.deltaTime} ms`);
   },
 
-  shouldRenderFrame: () => {
+  shouldRenderFrame() {
     let now = Date.now();
     Game.deltaTime = now - Game.lastRender;
     let mspf = (1 / Game.fps) * 1000;
     return Game.deltaTime >= mspf;
   },
 
-  loop: () => {
+  loop() {
     if (!paused) {
       Game.update();
       if (Game.shouldRenderFrame()) {
@@ -441,18 +428,48 @@ let Game = {
     }
     window.requestAnimationFrame(Game.loop);
   },
-};
 
-function debug(message) {
-  if (DEBUG) console.log(message);
+  // when a canvas is clicked, all logic is resolved here.
+  resolveClick() {
+    console.log("A click is being resolved!");
+    const results = [];
+
+    for (const [element, chance] of Object.entries(Game.click_chances)) {
+      if (Math.random() < chance) {
+        console.log(element);
+        results.push(element);
+      }
+    }
+
+    return results;
+  }
+};
+debug("Game element made");
+
+let mainEnvironment = new Environment(Game.resolveClick);
+mainEnvironment.initializeCanvas(document.getElementById("sim-main"), 600, 600);
+mainEnvironment.canvas.classList.add("main-canvas");
+mainEnvironment.canvas.id = "sim-canvas-main";
+mainEnvironment.setBGImage("./space_texture.jpg");
+Game.environments.push(mainEnvironment);
+debug("Main environment made");
+
+function makeEnv() {
+  let asdfas = new Environment(Game.resolveClick);
+  asdfas.initializeCanvas(document.getElementById("sim-other"), 500, 200);
+  Game.environments.push(asdfas);
 }
+for (let i = 0; i < 3; i++) {
+  makeEnv();
+}
+debug("Backup environments made");
 
 // Initialize element counter on page load
 updateElementCounter();
 document.addEventListener(
   "click",
   (e) => {
-    console.log("DOCUMENT CLICK:", e.target);
+    // console.log("DOCUMENT CLICK:", e.target);
   },
   true,
 ); // capture phase
@@ -461,3 +478,12 @@ renderUpgradesPanel();
 
 // Begin looping
 window.requestAnimationFrame(Game.loop);
+
+
+
+
+
+/*** HELPER FUNCTIONS ***/
+function debug(message) {
+  if (DEBUG) console.log(message);
+}

@@ -15,7 +15,7 @@ function clamp01(x) {
 }
 
 export class Environment {
-  constructor() {
+  constructor(onClickResolve) {
     this.canvas;
     this.ctx;
     this.max_particles = MAX_PARTICLES;
@@ -23,6 +23,7 @@ export class Environment {
     this.particles = [];
     this.effects;
     this.bgImage = new Image();
+    this.onClickResolve = onClickResolve;
 
     window.addEventListener("resize", this.resizeCanvas);
   }
@@ -151,55 +152,8 @@ export class Environment {
     });
   }
 
-  updateElementCounter() {
-    const counterList = document.getElementById("counter-list");
-    const counts = window.ChemistryBIG.counters || {};
-    const allElements = window.ChemistryBIG.getAllElements();
-
-    // Unlock checks should use the same single counter system
-    if (window.ChemistryBIG.checkMoleculeUnlocks) {
-      window.ChemistryBIG.checkMoleculeUnlocks(counts);
-    }
-
-    counterList.innerHTML = "";
-
-    const elementsToShow = allElements.filter(
-      (name) => (counts[name] || 0) > 0,
-    );
-
-    if (elementsToShow.length === 0) {
-      counterList.innerHTML =
-        '<div style="padding: 8px; text-align: center; color: #93c5fd; font-size: 12px; opacity: 0.6;">No elements</div>';
-      return;
-    }
-
-    for (const elementName of elementsToShow) {
-      const raw = counts[elementName] || 0;
-      const displayCount = Number.isInteger(raw) ? raw : raw.toFixed(1);
-      const def = window.ChemistryBIG.getElementDefinition(elementName);
-
-      const counterItem = document.createElement("div");
-      counterItem.className = "counter-item";
-      counterItem.style.borderLeftColor = def.color;
-      counterItem.style.borderLeftWidth = "3px";
-      counterItem.innerHTML = `
-            <span class="element-name">${elementName}</span>
-            <span class="element-count">${displayCount}</span>
-            `;
-      counterList.appendChild(counterItem);
-    }
-    requestSpawnButtonsRefresh();
-  }
-
-  normalizeSymbol(sym) {
-    const s = (sym ?? "").toString().trim();
-    if (s.length === 0) return s;
-    if (s.length === 1) return s.toUpperCase(); // h -> H
-    return s[0].toUpperCase() + s.slice(1).toLowerCase(); // he -> He, LI -> Li
-  }
-
   spawnElement(name, x, y) {
-    const symbol = this.normalizeSymbol(name);
+    const symbol = normalizeSymbol(name);
 
     const e = window.ChemistryBIG?.createElementInstance?.(symbol, x, y);
     if (!e) return null;
@@ -329,7 +283,7 @@ export class Environment {
                 );
 
                 if (product) {
-                  this.elements.push(product);
+                  this.spawnElement(productName, collisionX, collisionY);
                 }
               }
 
@@ -388,25 +342,26 @@ export class Environment {
       this.elements.splice(index, 1);
     });
 
-    // // Update counter if any element was removed
-    // if (indicesToRemove.length > 0) {
-    //     updateElementCounter();
-    // }
+
   }
 
   // Canvas click handler to create hydrogen (10% chance) and particle effect
   addCanvasClickListener() {
     this.canvas.addEventListener("click", (event) => {
-      console.log("HEY");
       const rect = this.canvas.getBoundingClientRect();
+      const click_debug_info = {
+        "Rect left:": rect.left,
+        "Rect top:": rect.top,
+        "Mouse X:": event.clientX,
+        "Mouse Y:": event.clientY,
+      };
+      debug(click_debug_info);
 
-      debug(`Rect left: ${rect.left}`);
-      debug(`Rect top: ${rect.top}`);
-      debug(`Mouse X: ${event.clientX}`);
-      debug(`Mouse Y: ${event.clientY}`);
+      const scaleX = this.canvas.width / rect.width;
+      const scaleY = this.canvas.height / rect.height;
 
-      const x = event.clientX - rect.left;
-      const y = event.clientY - rect.top;
+      const x = (event.clientX - rect.left) * scaleX;
+      const y = (event.clientY - rect.top) * scaleY;
 
       // NEW: push nearby elements away from the click
       this.pushNearbyElements(x, y);
@@ -416,25 +371,11 @@ export class Environment {
         this.particles.push(new Particle(x, y));
       }
 
-      // 10% chance to create hydrogen on click
-      if (Math.random() < hydrogenClickChance) {
-        this.spawnElement("H", x, y);
-        this.updateElementCounter();
-      } else if (Math.random() < sodiumClickChance) {
-        this.spawnElement("Na", x, y);
-        this.updateElementCounter();
-      } else if (Math.random() < potassiumClickChance) {
-        spawnElement("K", x, y);
-        updateElementCounter();
-      } else if (Math.random() < rubidiumClickChance) {
-        spawnElement("Rb", x, y);
-        updateElementCounter();
-      } else if (Math.random() < cesiumClickChance) {
-        spawnElement("Cs", x, y);
-        updateElementCounter();
-      } else if (Math.random() < franciumClickChance) {
-        spawnElement("Fr", x, y);
-        updateElementCounter();
+      if (!this.onClickResolve) return;
+      const spawnList = this.onClickResolve();
+
+      for (const element of spawnList) {
+        this.spawnElement(element, x, y);
       }
     });
   }
@@ -470,4 +411,11 @@ export class Environment {
 // helpful functions
 export function debug(message) {
   console.log(message);
+}
+
+function normalizeSymbol(sym) {
+  const s = (sym ?? "").toString().trim();
+  if (s.length === 0) return s;
+  if (s.length === 1) return s.toUpperCase(); // h -> H
+  return s[0].toUpperCase() + s.slice(1).toLowerCase(); // he -> He, LI -> Li
 }

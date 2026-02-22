@@ -282,3 +282,50 @@ body{
   font-variant-numeric: tabular-nums;
   font-weight:800;
 }
+
+#element-tooltip-overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(2,6,23,0.72);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:9999;
+}
+
+.element-tooltip-card{
+  width:min(460px, 92vw);
+  background:linear-gradient(180deg, rgba(12,18,28,0.98), rgba(8,12,18,0.96));
+  border-radius:18px;
+  border:1px solid rgba(125,211,252,0.10);
+  box-shadow:0 20px 70px rgba(2,6,23,0.8);
+  padding:18px 18px 14px 18px;
+}
+
+.element-tooltip-title{
+  font-weight:800;
+  font-size:18px;
+  color:#e6eef8;
+  margin-bottom:8px;
+}
+
+.element-tooltip-desc{
+  color:#93c5fd;
+  font-size:13px;
+  line-height:1.4;
+  margin-bottom:14px;
+}
+
+.element-tooltip-close{
+  width:100%;
+  padding:10px 12px;
+  border-radius:12px;
+  border:1px solid rgba(45,212,191,0.25);
+  background:rgba(45,212,191,0.12);
+  color:#e6eef8;
+  font-weight:700;
+  cursor:pointer;
+}
+.element-tooltip-close:hover{
+  background:rgba(45,212,191,0.18);
+}

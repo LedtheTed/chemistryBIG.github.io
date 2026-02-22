@@ -4,8 +4,13 @@
 
     let canvas = document.getElementById("sim-canvas");
     const ctx = canvas.getContext("2d");
-    let DEBUG = true; // switch this to true/false depending on 
+    let DEBUG = true; // switch this to true/false depending on
+    let paused = false; 
 
+    // discovered elements tooltips
+    const discoveredElements = new Set();
+    const discoveryQueue = [];
+    let tooltipOpen = false;
 
     // --- Reaction speed bonus tuning ---
     const REACTION_SPEED_THRESHOLD = 2.5;   // below this: no bonus
@@ -103,8 +108,15 @@
     return window.ChemistryBIG.counters[name] || 0;
     };
     window.ChemistryBIG.incrCounter = function(name, amount = 1) {
-    window.ChemistryBIG.counters[name] = (window.ChemistryBIG.counters[name] || 0) + amount;
-    return window.ChemistryBIG.counters[name];
+        const sym = normalizeSymbol(name);
+        const prev = window.ChemistryBIG.counters[sym] || 0;
+        const next = prev + amount;
+        window.ChemistryBIG.counters[sym] = next;
+
+        // Only trigger tooltip on first time crossing 0 -> >0
+        onElementGained(sym, prev, next);
+
+        return next;
     };
 
     window.ChemistryBIG.spendCounter = function(name, amount = 1) {
@@ -247,7 +259,7 @@
     let hydrogenClickChance = 0.1;
     // Canvas click handler to create hydrogen (10% chance) and particle effect
     canvas.addEventListener('click', (event) => {
-
+        if (paused) return;
         const rect = canvas.getBoundingClientRect();
 
         debug(`Rect left: ${rect.left}`);
@@ -486,6 +498,11 @@
         const dt = (now - lastAutoTime) / 1000;
         lastAutoTime = now;
 
+        if (paused) {
+            requestAnimationFrame(autoTick);
+            return;
+        }
+
         let changed = false;
 
         for (const [elementName, rate] of Object.entries(autoRates)) {
@@ -503,6 +520,61 @@
         }
 
         requestAnimationFrame(autoTick);
+    }
+
+    function pauseGame() {
+        paused = true;
+    }
+
+    function resumeGame() {
+        paused = false;
+    }
+
+    function showElementTooltip(symbol) {
+        if (tooltipOpen) return;
+        tooltipOpen = true;
+        pauseGame();
+
+        const def = window.ChemistryBIG?.getElementDefinition?.(symbol) || {};
+        const niceName = def.displayName || def.name || symbol;
+        const desc = def.desc || def.description || "New element discovered!";
+
+        const overlay = document.createElement("div");
+        overlay.id = "element-tooltip-overlay";
+        overlay.innerHTML = `
+            <div class="element-tooltip-card" style="border-left: 6px solid ${def.color || "#2dd4bf"}">
+            <div class="element-tooltip-title">${symbol} — ${niceName}</div>
+            <div class="element-tooltip-desc">${desc}</div>
+            <button type="button" class="element-tooltip-close">Continue</button>
+            </div>
+        `;
+
+        document.body.appendChild(overlay);
+
+        const closeBtn = overlay.querySelector(".element-tooltip-close");
+        closeBtn.addEventListener("click", () => {
+            overlay.remove();
+            tooltipOpen = false;
+            resumeGame();
+            // If more discoveries happened while paused, show next
+            if (discoveryQueue.length > 0) {
+            const next = discoveryQueue.shift();
+            showElementTooltip(next);
+            }
+        });
+    }
+
+        // Call this whenever an element count increases
+    function onElementGained(symbol, prevCount, newCount) {
+        if (prevCount > 0) return;     // already had it before
+        if (newCount <= 0) return;     // still none
+        if (discoveredElements.has(symbol)) return;
+
+        discoveredElements.add(symbol);
+
+        // If a tooltip is already open, queue it; otherwise show now
+        if (tooltipOpen || paused) discoveryQueue.push(symbol);
+        else showElementTooltip(symbol);
     }
 
 
@@ -560,13 +632,15 @@
     },
 
     loop: () => {
-        Game.update();
-        if (Game.shouldRenderFrame()) {
-        Game.draw();
-        Game.frame += 1;
+        if (!paused) {
+            Game.update();
+            if (Game.shouldRenderFrame()) {
+            Game.draw();
+            Game.frame += 1;
+            }
         }
         window.requestAnimationFrame(Game.loop);
-    }
+        }
     }
 
     function debug(message) {

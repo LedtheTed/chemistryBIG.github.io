@@ -59,6 +59,11 @@ function updateMoleculesDisplay() {
   const moleculesList = document.getElementById("molecules-list");
   if (!moleculesList) return;
 
+  // Track disappeared molecules globally
+  window.ChemistryBIG = window.ChemistryBIG || {};
+  window.ChemistryBIG.disappearedMolecules = window.ChemistryBIG.disappearedMolecules || new Set();
+  const disappeared = window.ChemistryBIG.disappearedMolecules;
+
   const moleculeDefinitions = getMoleculeDefinitionsObj();
   if (!moleculeDefinitions || Object.keys(moleculeDefinitions).length === 0) {
     moleculesList.innerHTML =
@@ -84,6 +89,8 @@ function updateMoleculesDisplay() {
   displayOrder.forEach((moleculeKey) => {
     const moleculeDef = moleculeDefinitions[moleculeKey];
     if (!moleculeDef) return;
+    // If this molecule has disappeared, never render it again
+    if (disappeared.has(moleculeKey)) return;
 
     const moleculeItem = document.createElement("div");
     moleculeItem.className = `molecule-item ${moleculeDef.unlocked ? "unlocked" : "locked"}`;
@@ -99,6 +106,15 @@ function updateMoleculesDisplay() {
       <span class="molecule-name">${moleculeDef.formula}</span>
       <span class="molecule-status">${statusText}</span>
     `;
+
+    // Animate and disappear if just unlocked
+    if (moleculeDef.unlocked && !disappeared.has(moleculeKey)) {
+      moleculeItem.classList.add("disappear");
+      setTimeout(() => {
+        disappeared.add(moleculeKey);
+        updateMoleculesDisplay();
+      }, 1000); // match CSS animation duration
+    }
 
     moleculesList.appendChild(moleculeItem);
   });
